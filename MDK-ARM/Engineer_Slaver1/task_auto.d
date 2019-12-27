@@ -49,7 +49,7 @@ engineer_slaver1\task_auto.o: ../Middlewares/Third_Party/FreeRTOS/Source/include
 engineer_slaver1\task_auto.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 engineer_slaver1\task_auto.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 engineer_slaver1\task_auto.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-engineer_slaver1\task_auto.o: .\My_APP\app_car.hpp
+engineer_slaver1\task_auto.o: .\My_APP\app_remote.h
 engineer_slaver1\task_auto.o: .\My_BSP\bsp_motor.hpp
 engineer_slaver1\task_auto.o: .\My_BSP\bsp_car_config.hpp
 engineer_slaver1\task_auto.o: .\My_BSP\global_define.h

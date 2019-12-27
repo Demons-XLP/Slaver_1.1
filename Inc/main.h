@@ -79,6 +79,10 @@ void Error_Handler(void);
 #define OLED_DC_GPIO_Port GPIOC
 #define OLED_RES_Pin GPIO_PIN_5
 #define OLED_RES_GPIO_Port GPIOC
+#define OLED_CS_Pin GPIO_PIN_0
+#define OLED_CS_GPIO_Port GPIOB
+#define Air_Cylinder6_Pin GPIO_PIN_2
+#define Air_Cylinder6_GPIO_Port GPIOD
 #define Air_Cylinder5_Pin GPIO_PIN_3
 #define Air_Cylinder5_GPIO_Port GPIOB
 #define Air_Cylinder4_Pin GPIO_PIN_4
@@ -89,8 +93,12 @@ void Error_Handler(void);
 #define Air_Cylinder2_GPIO_Port GPIOB
 #define Air_Cylinder1_Pin GPIO_PIN_7
 #define Air_Cylinder1_GPIO_Port GPIOB
+#define Omron5_Pin GPIO_PIN_8
+#define Omron5_GPIO_Port GPIOB
+#define Omron5_EXTI_IRQn EXTI9_5_IRQn
 #define Omron4_Pin GPIO_PIN_9
 #define Omron4_GPIO_Port GPIOB
+#define Omron4_EXTI_IRQn EXTI9_5_IRQn
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

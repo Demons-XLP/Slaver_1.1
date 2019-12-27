@@ -25,10 +25,22 @@
 #include "task_auto.h"
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
-#include "app_car.hpp"
+#include "app_remote.h"
 #include "global_define.h"
+#include "app_remote.h"
+uint8_t app_car_ClawTake_Flag1_1 = ENDING;  //是否一级取弹第1箱判断
+uint8_t app_car_ClawTake_Flag1_2 = ENDING;  //是否一级取弹第2箱判断
+uint8_t app_car_ClawTake_Flag2_1 = ENDING;  //是否二级取弹第1箱判断
+uint8_t app_car_ClawTake_Flag2_2 = ENDING;  //是否二级取弹第2箱判断
+uint8_t app_car_ClawTake_Flag2_3 = ENDING;  //是否二级取弹第3箱判断
+uint8_t app_car_ClawTake_Flag2_4 = ENDING;  //是否二级取弹第4箱判断
 
-
+void CaissonTake_First_1(uint8_t type);
+void CaissonTake_First_2(uint8_t type);
+void CaissonTake_Second_1(uint8_t type);
+void CaissonTake_Second_2(uint8_t type);
+void CaissonTake_Second_3(uint8_t type);
+void CaissonTake_Second_4(uint8_t type);
 
 
 void Caisson_TakeTask(void const *argument)
@@ -37,83 +49,296 @@ void Caisson_TakeTask(void const *argument)
 	xLastWakeTime = xTaskGetTickCount();//获取当前的系统时间
 	for(;;)
 	{
-		CaissonTake_FirstRow(app_car_ClawTake_Flag1);  //一级取弹
-		CaissonTake_SecondRow(app_car_ClawTake_Flag2);  //二级取弹
-		vTaskDelayUntil(&xLastWakeTime,5/portTICK_PERIOD_MS); //定周期延时
+		CaissonTake_First_1(app_car_ClawTake_Flag1_1);  //一次取弹
+		CaissonTake_First_2(app_car_ClawTake_Flag1_2);
+		CaissonTake_Second_1(app_car_ClawTake_Flag2_1);  //二次取弹
+		CaissonTake_Second_2(app_car_ClawTake_Flag2_2);
+		CaissonTake_Second_3(app_car_ClawTake_Flag2_3);
+		CaissonTake_Second_4(app_car_ClawTake_Flag2_4);
+		vTaskDelayUntil(&xLastWakeTime,10/portTICK_PERIOD_MS); //定周期延时
 	}
 }
 
 
 
 /** 
-* @brief   一级取弹任务函数
-* @remarks 取第一排弹药箱
+* @brief   一次取弹任务函数
+* @remarks 第1箱
 *           type 运行参数，即是否要运行该模式
 * 日志    
 */
-void CaissonTake_FirstRow(uint8_t type)
+void CaissonTake_First_1(uint8_t type)
 {
 	switch(type)
 	{
-		case ENDING:
-			Claw_Out_1_OFF;
+		case STARTING:  
     break;
     case RUNNING:
-			Claw_Out_1_ON;  //一级伸爪
-			osDelay(150);
-			OverTurn_Claw_ON;  //翻出爪子
-			osDelay(500);  //等待爪子下去
-			Clamp_OFF;  //抓取弹药箱
-			osDelay(100);  //等待夹紧弹药箱
-			OverTurn_Claw_OFF;  //翻回爪子
-			osDelay(1500);  //等待子弹落尽
-			Clamp_ON;  //松开爪子，准备将弹药箱扔掉
-			osDelay(100);  //等待爪子松开弹药箱
-			Launch_ON;  //将爪子弹射出去
-			osDelay(700);  //等待弹射完成
-			Launch_OFF; //收回弹射气缸
-		  app_car_ClawTake_Flag1 = ENDING;
+					 Claw_Out_1_ON;  //一级气缸出
+		       osDelay(100);
+					 OverTurn_Claw_ON;  //翻出爪子
+					 osDelay(500);  //等待爪子下去
+					 Clamp_OFF;  //抓取弹药箱
+				   osDelay(100);  //等待夹紧弹药箱
+					 OverTurn_Claw_OFF;  //翻回爪子
+		       osDelay(800);  //等待翻回
+					 Claw_TargetAngle = Claw_L_Lim + 1900.641f;  //移到最右边
+		       osDelay(2200);  //等待弹丸漏尽+移爪
+				   app_car_ClawTake_Flag1_1 = ENDING;  //结束任务
+		       app_car_ClawTake_Flag1_2 = RUNNING;  //开启第二箱取弹
 		break;
-		default:
+		case ENDING  :
 		break;
 	}
   
 }
 
 /** 
-* @brief   二级取弹任务函数
-* @remarks 取第二排弹药箱
+* @brief   一次取弹任务函数
+* @remarks 第2箱
 *           type 运行参数，即是否要运行该模式
 * 日志    
 */
-void CaissonTake_SecondRow(uint8_t type)
+void CaissonTake_First_2(uint8_t type)
 {
 	switch(type)
 	{
-		case ENDING:
-			Claw_Out_1_OFF;
-		  Claw_Out_2_OFF;
+		case STARTING:  
     break;
     case RUNNING:
-			Claw_Out_1_ON;  //一级伸爪
-			osDelay(150);
-			Claw_Out_2_ON;  //二级伸爪
-			osDelay(150);
-			OverTurn_Claw_ON;  //翻出爪子
-			osDelay(500);  //等待爪子下去
-			Clamp_OFF;  //抓取弹药箱
-			osDelay(100);  //等待夹紧弹药箱
-			OverTurn_Claw_OFF;  //翻回爪子
-			osDelay(1500);  //等待子弹落尽
-			Clamp_ON;  //松开爪子，准备将弹药箱扔掉
-			osDelay(100);  //等待爪子松开弹药箱
-			Launch_ON;  //将爪子弹射出去
-			osDelay(700);  //等待弹射完成
-			Launch_OFF; //收回弹射气缸
-		  app_car_ClawTake_Flag2 = ENDING;
+					 Clamp_ON;  //松开爪子，准备将弹药箱扔掉
+					 osDelay(20);  //等待爪子松开弹药箱
+					 Launch_ON;  //将爪子弹射出去
+					 osDelay(800);  //等待弹射完成
+					 Launch_OFF; //收回弹射气缸
+					 OverTurn_Claw_ON;  //翻出爪子
+					 osDelay(500);  //等待爪子下去
+					 Clamp_OFF;  //抓取弹药箱
+				   osDelay(100);  //等待夹紧弹药箱
+					 OverTurn_Claw_OFF;  //翻回爪子
+					 osDelay(800);  //等待翻回
+					 Claw_TargetAngle = Claw_L_Lim + 978.838f;  //回中间位置
+		       osDelay(1200);   //漏弹+移爪
+					 Clamp_ON;  //松开爪子，准备将弹药箱扔掉
+					 osDelay(20);  //等待爪子松开弹药箱
+					 Launch_ON;  //将爪子弹射出去
+					 osDelay(800);  //等待弹射完成
+					 Launch_OFF; //收回弹射气缸
+		       app_car_ClawTake_Flag1_1 = ENDING;  //结束任务
+				   app_car_ClawTake_Flag1_2 = ENDING;  
 		break;
-		default:
+		case ENDING  :
+						Claw_Out_1_OFF;  
 		break;
 	}
   
 }
+
+
+//void CaissonTake_FirstRow(uint8_t type)
+//{
+//	switch(type)
+//	{
+//		case CLOSE:
+//			Claw_Out_1_OFF;
+//    break;
+//    case OPEN:
+//			Claw_Out_1_ON;  //一级伸爪
+//			osDelay(150);
+//			OverTurn_Claw_ON;  //翻出爪子
+//			osDelay(500);  //等待爪子下去
+//			Clamp_OFF;  //抓取弹药箱
+//			osDelay(100);  //等待夹紧弹药箱
+//			OverTurn_Claw_OFF;  //翻回爪子
+//		  
+//			osDelay(1500);  //等待子弹落尽
+//			Clamp_ON;  //松开爪子，准备将弹药箱扔掉
+//			osDelay(100);  //等待爪子松开弹药箱
+//			Launch_ON;  //将爪子弹射出去
+//			osDelay(700);  //等待弹射完成
+//			Launch_OFF; //收回弹射气缸
+//		  app_car_ClawTake_Flag1 = CLOSE;
+//		break;
+//		default:
+//		break;
+//	}
+//  
+//}
+
+/** 
+* @brief   第二次取弹任务函数
+* @remarks 第1箱
+*           type 运行参数，即是否要运行该模式
+* 日志    
+*/
+void CaissonTake_Second_1(uint8_t type)
+{
+	switch(type)
+	{
+		case STARTING:  
+    break;
+    case RUNNING:
+					 Claw_Out_1_ON;  //一级气缸出
+					 OverTurn_Claw_ON;  //翻出爪子
+					 osDelay(500);  //等待爪子下去
+					 Clamp_OFF;  //抓取弹药箱
+				   osDelay(100);  //等待夹紧弹药箱
+					 OverTurn_Claw_OFF;  //翻回爪子
+					 osDelay(800);  //等待翻回
+					 Claw_TargetAngle = Claw_L_Lim + 50.f;  //准备取第2箱，移到最左边
+		       osDelay(1200);  //等待弹丸漏尽
+				   app_car_ClawTake_Flag2_1 = ENDING;  //结束第1箱任务
+		       app_car_ClawTake_Flag2_2 = RUNNING;  //开启第二箱取弹
+		break;
+		case ENDING  :
+		break;
+	}
+  
+}
+
+/** 
+* @brief   二次取弹任务函数
+* @remarks 第2箱
+*           type 运行参数，即是否要运行该模式
+* 日志    
+*/
+void CaissonTake_Second_2(uint8_t type)
+{
+	switch(type)
+	{
+		case STARTING:  
+    break;
+    case RUNNING:
+					 Claw_Out_2_ON;  //二级伸爪
+		       osDelay(200);
+					 Clamp_ON;  //松开爪子，准备将弹药箱扔掉
+					 osDelay(30);  //等待爪子松开弹药箱
+					 Launch_ON;  //将爪子弹射出去
+					 osDelay(700);  //等待弹射完成
+					 Launch_OFF; //收回弹射气缸
+					 OverTurn_Claw_ON;  //翻出爪子
+					 osDelay(500);  //等待爪子下去
+					 Clamp_OFF;  //抓取弹药箱
+				   osDelay(100);  //等待夹紧弹药箱
+					 OverTurn_Claw_OFF;  //翻回爪子
+					 osDelay(800);  //等待翻回
+					 Claw_TargetAngle = Claw_L_Lim + 978.838f;   //准备取第三箱，在中间
+		       osDelay(1200);   //漏弹+移爪
+					 app_car_ClawTake_Flag2_2 = ENDING;  
+		       app_car_ClawTake_Flag2_3 = RUNNING;
+		break;
+		case ENDING  :
+		break;
+	}
+  
+}
+/** 
+* @brief   二次取弹任务函数
+* @remarks 第3箱
+*           type 运行参数，即是否要运行该模式
+* 日志    
+*/
+void CaissonTake_Second_3(uint8_t type)
+{
+	switch(type)
+	{
+		case STARTING:  
+    break;
+    case RUNNING:
+					 Clamp_ON;  //松开爪子，准备将弹药箱扔掉
+					 osDelay(30);  //等待爪子松开弹药箱
+					 Launch_ON;  //将爪子弹射出去
+					 osDelay(700);  //等待弹射完成
+					 Launch_OFF; //收回弹射气缸
+					 OverTurn_Claw_ON;  //翻出爪子
+					 osDelay(500);  //等待爪子下去
+					 Clamp_OFF;  //抓取弹药箱
+				   osDelay(100);  //等待夹紧弹药箱
+					 OverTurn_Claw_OFF;  //翻回爪子
+					 osDelay(800);  //等待翻回
+					 Claw_TargetAngle = Claw_L_Lim + 1900.641f;   //准备取第4箱，在最右边
+		       osDelay(1200);   //漏弹+移爪
+					 app_car_ClawTake_Flag2_3 = ENDING;  
+		       app_car_ClawTake_Flag2_4 = RUNNING;
+		break;
+		case ENDING  :
+		break;
+	}
+  
+}
+
+/** 
+* @brief   二次取弹任务函数
+* @remarks 第4箱
+*           type 运行参数，即是否要运行该模式
+* 日志    
+*/
+void CaissonTake_Second_4(uint8_t type)
+{
+	switch(type)
+	{
+		case STARTING:  
+    break;
+    case RUNNING:
+					 Clamp_ON;  //松开爪子，准备将弹药箱扔掉
+					 osDelay(30);  //等待爪子松开弹药箱
+					 Launch_ON;  //将爪子弹射出去
+					 osDelay(700);  //等待弹射完成
+					 Launch_OFF; //收回弹射气缸
+					 OverTurn_Claw_ON;  //翻出爪子
+					 osDelay(500);  //等待爪子下去
+					 Clamp_OFF;  //抓取弹药箱
+				   osDelay(100);  //等待夹紧弹药箱
+					 OverTurn_Claw_OFF;  //翻回爪子
+					 osDelay(800);  //等待翻回
+					 Claw_TargetAngle = Claw_L_Lim + 978.838f;   //回到中间
+		       osDelay(1200);   //漏弹+移爪
+					 Clamp_ON;  //松开爪子，准备将弹药箱扔掉
+					 osDelay(30);  //等待爪子松开弹药箱
+					 Launch_ON;  //将爪子弹射出去
+					 osDelay(700);  //等待弹射完成
+					 Launch_OFF; //收回弹射气缸
+					 app_car_ClawTake_Flag2_1 = ENDING;  //结束任务
+					 app_car_ClawTake_Flag2_2 = ENDING;
+					 app_car_ClawTake_Flag2_3 = ENDING;
+					 app_car_ClawTake_Flag2_4 = ENDING;
+		break;
+		case ENDING  :
+						Claw_Out_1_OFF;  //收回气缸
+						Claw_Out_2_OFF;
+		break;
+	}
+  
+}
+
+//void CaissonTake_SecondRow(uint8_t type)
+//{
+//	switch(type)
+//	{
+//		case CLOSE:
+//			Claw_Out_1_OFF;
+//		  Claw_Out_2_OFF;
+//    break;
+//    case OPEN:
+//			Claw_Out_1_ON;  //一级伸爪
+//			osDelay(150);
+//			Claw_Out_2_ON;  //二级伸爪
+//			osDelay(150);
+//			OverTurn_Claw_ON;  //翻出爪子
+//			osDelay(500);  //等待爪子下去
+//			Clamp_OFF;  //抓取弹药箱
+//			osDelay(100);  //等待夹紧弹药箱
+//			OverTurn_Claw_OFF;  //翻回爪子
+//			osDelay(1500);  //等待子弹落尽
+//			Clamp_ON;  //松开爪子，准备将弹药箱扔掉
+//			osDelay(100);  //等待爪子松开弹药箱
+//			Launch_ON;  //将爪子弹射出去
+//			osDelay(700);  //等待弹射完成
+//			Launch_OFF; //收回弹射气缸
+//		  app_car_ClawTake_Flag2 = CLOSE;
+//		break;
+//		default:
+//		break;
+//	}
+//  
+//}

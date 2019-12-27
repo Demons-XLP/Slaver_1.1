@@ -3,9 +3,13 @@
 #include "stm32f4xx_hal.h"
 #include "main.h"
 
-void CaissonTake_FirstRow(uint8_t type);
-void CaissonTake_SecondRow(uint8_t type);
 void Caisson_TakeTask(void const *argument);
+extern uint8_t app_car_ClawTake_Flag1_1;  //是否一级取弹第1箱判断
+extern uint8_t app_car_ClawTake_Flag1_2;  //是否一级取弹第2箱判断
+extern uint8_t app_car_ClawTake_Flag2_1;  //是否二级取弹第1箱判断
+extern uint8_t app_car_ClawTake_Flag2_2;  //是否二级取弹第2箱判断
+extern uint8_t app_car_ClawTake_Flag2_3;  //是否二级取弹第3箱判断
+extern uint8_t app_car_ClawTake_Flag2_4;  //是否二级取弹第4箱判断
 
 #define Claw_Out_1_ON  				HAL_GPIO_WritePin(Air_Cylinder1_GPIO_Port,Air_Cylinder1_Pin,GPIO_PIN_SET)  //一级伸爪
 #define Claw_Out_1_OFF  			HAL_GPIO_WritePin(Air_Cylinder1_GPIO_Port,Air_Cylinder1_Pin,GPIO_PIN_RESET)  

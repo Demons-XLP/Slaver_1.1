@@ -15,7 +15,7 @@
 #include "string.h"
 
 #define MasterCan hcan2  //主副控通信为can2通信
-#define MasterID 0x101  //主控标识符ID
+#define Master_To_Slaver_ID 0x101  //主控标识符ID
 #define SlaverID 0x102  //副控标识符ID
 CAN_RxHeaderTypeDef RxHead;
 
@@ -40,7 +40,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHead, (uint8_t*)data);
 	if(hcan == &MasterCan)
 	{
-		if(RxHead.StdId == MasterID)
+		if(RxHead.StdId == Master_To_Slaver_ID)
 		{
 		  Master_Order_Caculate(data);
 		}
