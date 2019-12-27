@@ -722,11 +722,6 @@
           <GroupName>My_APP</GroupName>
           <Files>
             <File>
-              <FileName>app_car.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\My_APP\app_car.cpp</FilePath>
-            </File>
-            <File>
               <FileName>app_my_can.c</FileName>
               <FileType>8</FileType>
               <FilePath>.\My_APP\app_my_can.c</FilePath>

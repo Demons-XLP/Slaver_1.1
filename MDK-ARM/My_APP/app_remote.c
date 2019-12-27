@@ -27,24 +27,26 @@
 #include "main.h"
 #include "global_define.h"
 #include "task_auto.h"
-int16_t remote_mode = 22;  //当前遥控器模式，默认为安全
-int16_t last_mode = 0xff;  //上次运行模式参数 
-#define L_Omron Omron[0]   //左边传感器
-#define R_Omron Omron[1]  //右边传感器
 
+#define L_OMRON Omron[0]   //左爪
+#define R_OMRON Omron[1]  //右爪
+#define CLAW_IF_OUT Omron[2]  //爪子是否翻出去
 Motor_t DJI_Motor_3508(8192, 19);
-pid app_car_Claw_pid_In(1.5,0,0,0,10000,0,0,0);  //移爪内环
-pid app_car_Claw_pid_Out(1.9,0.1,20,300,10000,0,0,800); //移爪外环
-softmotor app_car_Claw_motor(1,0x201,&DJI_Motor_3508,&app_car_Claw_pid_In,&app_car_Claw_pid_Out);  //移爪电机
+//pid app_remote_Claw_pid_In(1.5,0,0,0,10000,0,0,0);  //移爪内环
+//pid app_remote_Claw_pid_Out(1.9,0.1,20,300,10000,0,0,800); //移爪外环
+pid app_remote_Claw_pid_In(3,0,0,0,16000,0,0,0);  //移爪内环
+pid app_remote_Claw_pid_Out(2.1,0.1,50,1000,10000,0,0,100); //移爪外环
+softmotor app_remote_Claw_motor(1,0x201,&DJI_Motor_3508,&app_remote_Claw_pid_In,&app_remote_Claw_pid_Out);  //移爪电机
 
 
-
-int16_t Slaver_Feedback[4];  //副控反馈给主控的数据
+static int16_t remote_mode = 22;  //当前遥控器模式，默认为安全
+static int16_t last_mode = 0xff;  //上次运行模式参数 
 static uint8_t If_Claw_Take_First = 0,If_Claw_Take_Second = 0;  //是否要进行1/2次取弹标志位,1为要取弹
-uint8_t Omron[4] = {0,0,0,0};
+float Claw_motor_Origin;  //存放爪子零点
 float Claw_TargetAngle;  //爪子目标值
 float Claw_L_Lim,Claw_R_Lim;  //爪子电机的左右边限位
-static float Claw_motor_Origin;  //存放爪子零点
+int16_t Slaver_Feedback[4];  //副控反馈给主控的数据
+uint8_t Omron[4] = {0,0,0,0};  //欧姆龙值，具体各个值代表什么见 MotorInit()
 
 
 //////*******************************非模式控制函数但放在此方便管理的函数*******************************************************************************/
@@ -54,9 +56,9 @@ static float Claw_motor_Origin;  //存放爪子零点
 */
 void MotorInit()
 {
-  app_car_Claw_motor.Enable_Block(8000,20,1);
+  app_remote_Claw_motor.Enable_Block(8000,20,1);
 	osDelay(1000);  //等待电机数据初始化\\Engineer_Slaver1\My_APP/app_remote.c\Omron[2]
-	Claw_motor_Origin = app_car_Claw_motor.SoftAngle;  //初始化零点信息
+	Claw_motor_Origin = app_remote_Claw_motor.SoftAngle;  //初始化零点信息
   Omron[0] = HAL_GPIO_ReadPin(Omron1_GPIO_Port,Omron1_Pin);  //左爪
 	Omron[1] = HAL_GPIO_ReadPin(Omron2_GPIO_Port,Omron2_Pin);  //右爪
 	Omron[2] = HAL_GPIO_ReadPin(Omron3_GPIO_Port,Omron3_Pin);  //位置
@@ -97,9 +99,13 @@ static void Safe_Mode(uint8_t type)
 		case STARTING:
 		break;
 		case RUNNING: 
-					app_car_Claw_motor.Safe_Set();    //安全
-					app_car_ClawTake_Flag1_2 = ENDING;   //一级取弹关
-					app_car_ClawTake_Flag2_4 = ENDING;   //二级取弹关 
+					app_remote_Claw_motor.Safe_Set();    //安全
+					task_auto_ClawTake_Flag1_1 = ENDING;   //取弹Flag关闭
+					task_auto_ClawTake_Flag1_2 = ENDING;  
+					task_auto_ClawTake_Flag2_1 = ENDING;    
+					task_auto_ClawTake_Flag2_2 = ENDING;    
+					task_auto_ClawTake_Flag2_3 = ENDING;    
+					task_auto_ClawTake_Flag2_4 = ENDING;   
 		break;
 		case ENDING:
 		break;
@@ -117,11 +123,11 @@ static void Claw_Init_Mode(uint8_t type)
 	  case STARTING:
 		break;
 		case RUNNING:
-					if(app_car_Claw_motor.block->IsBlock == 1)
+					if(app_remote_Claw_motor.block->IsBlock == 1)
 					{
-						app_car_Claw_motor.Safe_Set();  //堵转停止
-						app_car_Claw_motor.block->Clear_BlockFlag();
-						Claw_motor_Origin = app_car_Claw_motor.SoftAngle;  //重新初始化零点
+						app_remote_Claw_motor.Safe_Set();  //堵转停止
+						app_remote_Claw_motor.block->Clear_BlockFlag();
+						Claw_motor_Origin = app_remote_Claw_motor.SoftAngle;  //重新初始化零点
 						if(Claw_motor_Origin < 0)  //左边限位
 						{
 							Claw_L_Lim = Claw_motor_Origin;   //记录左限位
@@ -134,9 +140,13 @@ static void Claw_Init_Mode(uint8_t type)
 						}
 					}
 					Claw_TargetAngle += Master_Order[1] * 0.002;   //遥控器控制爪子电机左右移动
-					app_car_Claw_motor.Angle_Set(Claw_TargetAngle);    
-					app_car_ClawTake_Flag1_2 = ENDING;   //一级取弹关
-					app_car_ClawTake_Flag2_4 = ENDING;   //二级取弹关 
+					app_remote_Claw_motor.Angle_Set(Claw_TargetAngle);    
+					task_auto_ClawTake_Flag1_1 = ENDING;   //取弹Flag关闭
+					task_auto_ClawTake_Flag1_2 = ENDING;  
+					task_auto_ClawTake_Flag2_1 = ENDING;    
+					task_auto_ClawTake_Flag2_2 = ENDING;    
+					task_auto_ClawTake_Flag2_3 = ENDING;    
+					task_auto_ClawTake_Flag2_4 = ENDING;   
 		break;
 		case ENDING:
 					 Safe_Mode(RUNNING);    //安全
@@ -152,7 +162,7 @@ static void Slaver_First_ClawTake(uint8_t type)
   switch (type)
 	{
 	  case STARTING:
-					app_car_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 40.f);  //限位
+					app_remote_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 40.f);  //限位
 		      Claw_TargetAngle = Claw_L_Lim + 50.f;  //移到最左边
 		break;
 		case RUNNING:
@@ -162,13 +172,13 @@ static void Slaver_First_ClawTake(uint8_t type)
 				  }
 					if(If_Claw_Take_First == 1)  //判断是否可以取弹
 					{
-						if(ABS(app_car_Claw_motor.SoftAngle - Claw_TargetAngle) < 1)
+						if(ABS(app_remote_Claw_motor.SoftAngle - Claw_TargetAngle) < 1)
 						{
-							app_car_ClawTake_Flag1_1 = RUNNING;  //一级取弹开始
+							task_auto_ClawTake_Flag1_1 = RUNNING;  //一级取弹开始
 							If_Claw_Take_First = 0;
 						} 
 				  }
-					app_car_Claw_motor.Angle_Set(Claw_TargetAngle);
+					app_remote_Claw_motor.Angle_Set(Claw_TargetAngle);
     break;
 		case ENDING:
 					 Safe_Mode(RUNNING);    //安全
@@ -186,7 +196,7 @@ static void Slaver_Second_ClawTake(uint8_t type)
   switch (type)
 	{
 	  case STARTING:
-					 app_car_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 50.f);  //限位
+					 app_remote_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 50.f);  //限位
 					 Claw_TargetAngle = Claw_L_Lim + 978.838f;  //移到中间
 		break;
 		case RUNNING:
@@ -196,13 +206,13 @@ static void Slaver_Second_ClawTake(uint8_t type)
 				  }
 					if(If_Claw_Take_Second == 1)  //判断是否可以取弹
 					{
-						if(ABS(app_car_Claw_motor.SoftAngle - Claw_TargetAngle) < 1)
+						if(ABS(app_remote_Claw_motor.SoftAngle - Claw_TargetAngle) < 1)
 						{
-							app_car_ClawTake_Flag2_1 = RUNNING;  //二次取弹开始
+							task_auto_ClawTake_Flag2_1 = RUNNING;  //二次取弹开始
 							If_Claw_Take_Second = 0;
 						}  
 				  }
-					app_car_Claw_motor.Angle_Set(Claw_TargetAngle);
+					app_remote_Claw_motor.Angle_Set(Claw_TargetAngle);
     break;
 		case ENDING:
 					 Safe_Mode(RUNNING);    //安全
@@ -218,13 +228,17 @@ static void Keep_Claw_Mode(uint8_t type)
 	switch(type)
 	{   
 		 case STARTING:
-						app_car_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 50.f);  //限位
+						app_remote_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 50.f);  //限位
 						Claw_TargetAngle = Claw_L_Lim + 978.838f;	//爪子在中间位置
-						app_car_ClawTake_Flag1_2 = ENDING;   //一级取弹关
-						app_car_ClawTake_Flag2_4 = ENDING;   //二级取弹关
+						task_auto_ClawTake_Flag1_1 = ENDING;   //取弹Flag关闭
+						task_auto_ClawTake_Flag1_2 = ENDING;  
+						task_auto_ClawTake_Flag2_1 = ENDING;    
+						task_auto_ClawTake_Flag2_2 = ENDING;    
+						task_auto_ClawTake_Flag2_3 = ENDING;    
+						task_auto_ClawTake_Flag2_4 = ENDING;   
 	 	 break;
 		 case RUNNING:
-						app_car_Claw_motor.Angle_Set(Claw_TargetAngle);  //使保持在中间位置
+						app_remote_Claw_motor.Angle_Set(Claw_TargetAngle);  //使保持在中间位置
 		 case ENDING:
 		 break;
    }
@@ -252,6 +266,9 @@ void Remote_Distribute(int16_t mode,uint8_t type)
 		break;
 		case 33:  //底盘运动时爪子不动
 					Keep_Claw_Mode(type);
+		break;
+		case 22:	//安全
+					Safe_Mode(type);
 		break;
 		default :		//安全
 					Safe_Mode(type);

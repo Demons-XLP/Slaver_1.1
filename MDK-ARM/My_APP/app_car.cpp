@@ -21,9 +21,9 @@
 //#include "global_define.h"
 
 //Motor_t DJI_Motor_3508(8192, 19);
-//pid app_car_Claw_pid_In(1.5,0,0,0,10000,0,0,0);  //移爪内环
-//pid app_car_Claw_pid_Out(1.9,0.1,20,300,10000,0,0,800); //移爪外环
-//softmotor app_car_Claw_motor(1,0x201,&DJI_Motor_3508,&app_car_Claw_pid_In,&app_car_Claw_pid_Out);  //移爪电机
+//pid app_remote_Claw_pid_In(1.5,0,0,0,10000,0,0,0);  //移爪内环
+//pid app_remote_Claw_pid_Out(1.9,0.1,20,300,10000,0,0,800); //移爪外环
+//softmotor app_remote_Claw_motor(1,0x201,&DJI_Motor_3508,&app_remote_Claw_pid_In,&app_remote_Claw_pid_Out);  //移爪电机
 
 
 
@@ -45,9 +45,9 @@
 //*/
 //void MotorInit()
 //{
-//  app_car_Claw_motor.Enable_Block(8000,20,1);
+//  app_remote_Claw_motor.Enable_Block(8000,20,1);
 //	osDelay(1000);  //等待电机数据初始化
-//	Claw_motor_Origin = app_car_Claw_motor.SoftAngle;  //初始化零点信息
+//	Claw_motor_Origin = app_remote_Claw_motor.SoftAngle;  //初始化零点信息
 //  Omron[0] = HAL_GPIO_ReadPin(Omron1_GPIO_Port,Omron1_Pin);  //左爪
 //	Omron[1] = HAL_GPIO_ReadPin(Omron2_GPIO_Port,Omron2_Pin);  
 //	Omron[2] = HAL_GPIO_ReadPin(Omron3_GPIO_Port,Omron3_Pin);  //右爪
@@ -91,11 +91,11 @@
 //	{
 //		
 //case 32:  //限位初始化，左中右下
-//			if(app_car_Claw_motor.block->IsBlock == 1)
+//			if(app_remote_Claw_motor.block->IsBlock == 1)
 //			{
-//			  app_car_Claw_motor.Safe_Set();  //堵转停止
-//			  app_car_Claw_motor.block->Clear_BlockFlag();
-//				Claw_motor_Origin = app_car_Claw_motor.SoftAngle;  //重新初始化零点
+//			  app_remote_Claw_motor.Safe_Set();  //堵转停止
+//			  app_remote_Claw_motor.block->Clear_BlockFlag();
+//				Claw_motor_Origin = app_remote_Claw_motor.SoftAngle;  //重新初始化零点
 //				if(Claw_motor_Origin < 0)  //左边限位
 //				{
 //					Claw_L_Lim = Claw_motor_Origin;   //记录左限位
@@ -109,7 +109,7 @@
 //				}
 
 //			 Claw_TargetAngle += Master_Order[1] * 0.002;
-//			 app_car_Claw_motor.Angle_Set(Claw_TargetAngle);  //控制爪子电机左右移动  
+//			 app_remote_Claw_motor.Angle_Set(Claw_TargetAngle);  //控制爪子电机左右移动  
 //			 app_car_ClawTake_Flag1 = ENDING;
 //   
 //break;
@@ -117,17 +117,17 @@
 //			
 //			if(Master_Order[0] > 0)  //拨轮上   左边箱
 //			{	  
-//				app_car_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f);  //限位
+//				app_remote_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f);  //限位
 //			  Claw_TargetAngle = Claw_L_Lim + 50.f;					
 //			}
 //		  else if(Master_Order[0] < 0)  //拨轮下  右边箱
 //			{
-//			  app_car_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f); 
+//			  app_remote_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f); 
 //				Claw_TargetAngle = Claw_L_Lim + 1900.641f;
 //		  }
 //			if(Master_Order[3] > 0)  //右边通道     上  中间箱 
 //			{
-//				app_car_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f); 
+//				app_remote_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f); 
 //				Claw_TargetAngle = Claw_L_Lim + 978.838f;
 //			}
 //				
@@ -135,23 +135,23 @@
 //			{
 //				app_car_ClawTake_Flag1 = RUNNING;  //一级取弹开始
 //			}
-//			app_car_Claw_motor.Angle_Set(Claw_TargetAngle);
+//			app_remote_Claw_motor.Angle_Set(Claw_TargetAngle);
 //break;
 //case 13:    //自动对位取弹，左上右中
 //	    app_car_ClawTake_Flag1 = ENDING;
 //break;			
 //case 22:  //安全模式
-//	    app_car_Claw_motor.Safe_Set();
+//	    app_remote_Claw_motor.Safe_Set();
 //			app_car_ClawTake_Flag1 = ENDING;
 //break;
 //case 33:  
 //     {
 //			 if(Master_Order[3] > 0)  //右边通道     上  中间箱 
 //			 {
-//					app_car_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f); 
+//					app_remote_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f); 
 //					Claw_TargetAngle = Claw_L_Lim + 978.838f;
 //			 }
-//					app_car_Claw_motor.Angle_Set(Claw_TargetAngle);
+//					app_remote_Claw_motor.Angle_Set(Claw_TargetAngle);
 //					app_car_ClawTake_Flag1 = ENDING;
 //	 	 }
 //break;
@@ -160,18 +160,18 @@
 //				if(Master_Order[0] > 0)  //拨轮上   左边箱
 //				{
 
-//					app_car_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f);  //限位
+//					app_remote_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f);  //限位
 //					Claw_TargetAngle = Claw_L_Lim + 50.f;
 
 //				}
 //				else if(Master_Order[0] < 0)  //拨轮下  右边箱
 //				{
-//					app_car_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f); 
+//					app_remote_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f); 
 //					Claw_TargetAngle = Claw_L_Lim + 1900.641f;
 //				}
 //				if(Master_Order[3] > 0)  //右边通道     上  中间箱 
 //				{
-//					app_car_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f); 
+//					app_remote_Claw_motor.Limit(Claw_R_Lim - 80.f,Claw_L_Lim + 80.f); 
 //					Claw_TargetAngle = Claw_L_Lim + 978.838f;
 //				}
 
@@ -179,11 +179,11 @@
 //				{
 //					app_car_ClawTake_Flag2 = RUNNING;  //一级取弹开始
 //				}
-//					app_car_Claw_motor.Angle_Set(Claw_TargetAngle);
+//					app_remote_Claw_motor.Angle_Set(Claw_TargetAngle);
 //			}
 //break;
 //default:
-//	    app_car_Claw_motor.Safe_Set();
+//	    app_remote_Claw_motor.Safe_Set();
 //			app_car_ClawTake_Flag1 = ENDING;
 //break;
 //}

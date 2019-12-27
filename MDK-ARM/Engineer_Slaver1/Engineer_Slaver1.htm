@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Engineer_Slaver1\Engineer_Slaver1.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Engineer_Slaver1\Engineer_Slaver1.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Dec 27 10:11:57 2019
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Dec 27 20:38:12 2019
 <BR><P>
 <H3>Maximum Stack Usage =        320 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -135,7 +135,7 @@ Function Pointers
  <LI><a href="#[7b]">softmotor::update(unsigned char*)</a> from bsp_motor.o(i._ZN9softmotor6updateEPh) referenced from bsp_motor.o(.constdata__ZTV9softmotor)
  <LI><a href="#[7a]">__cxa_pure_virtual</a> from pure_virt.o(i.__cxa_pure_virtual) referenced 3 times from bsp_motor.o(.constdata__ZTV7manager)
  <LI><a href="#[7f]">__main</a> from __main.o(!!!main) referenced from startup_stm32f405xx.o(.text)
- <LI><a href="#[7e]">__sti___12_app_remote_c_1233eb72</a> from app_remote.o(i.__sti___12_app_remote_c_1233eb72) referenced from app_remote.o(.init_array)
+ <LI><a href="#[7e]">__sti___12_app_remote_c_3e5939a9</a> from app_remote.o(i.__sti___12_app_remote_c_3e5939a9) referenced from app_remote.o(.init_array)
  <LI><a href="#[71]">prvIdleTask</a> from tasks.o(i.prvIdleTask) referenced from tasks.o(i.vTaskStartScheduler)
  <LI><a href="#[70]">prvTaskExitError</a> from port.o(i.prvTaskExitError) referenced from port.o(i.pxPortInitialiseStack)
 </UL>
@@ -1585,7 +1585,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[11f]"></a>Remote_Distribute(short, unsigned char)</STRONG> (Thumb, 68 bytes, Stack size 16 bytes, app_remote.o(i._Z17Remote_Distributesh))
+<P><STRONG><a name="[11f]"></a>Remote_Distribute(short, unsigned char)</STRONG> (Thumb, 84 bytes, Stack size 16 bytes, app_remote.o(i._Z17Remote_Distributesh))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = Remote_Distribute(short, unsigned char) &rArr; [local to app_remote_c]::Claw_Init_Mode(unsigned char) &rArr; __aeabi_dmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;[local to app_remote_c]::Safe_Mode(unsigned char)
@@ -1758,7 +1758,7 @@ Global Symbols
 <P><STRONG><a name="[150]"></a>pid::pid(float, float, float, float, float, unsigned short, unsigned short, unsigned short)</STRONG> (Thumb, 74 bytes, Stack size 8 bytes, bsp_motor.o(i._ZN3pidC1Efffffttt))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = pid::pid(float, float, float, float, float, unsigned short, unsigned short, unsigned short)
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__sti___12_app_remote_c_1233eb72
+<BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__sti___12_app_remote_c_3e5939a9
 </UL>
 
 <P><STRONG><a name="[1bc]"></a>pid::pid__sub_object(float, float, float, float, float, unsigned short, unsigned short, unsigned short)</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, bsp_motor.o(i._ZN3pidC1Efffffttt), UNUSED)
@@ -1813,7 +1813,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;manager::manager__sub_object()
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__sti___12_app_remote_c_1233eb72
+<BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__sti___12_app_remote_c_3e5939a9
 </UL>
 
 <P><STRONG><a name="[1bd]"></a>motor::motor__sub_object(unsigned char, unsigned short, str_Motor_t*, pid*, pid*)</STRONG> (Thumb, 0 bytes, Stack size 32 bytes, bsp_motor.o(i._ZN5motorC1EhtP11str_Motor_tP3pidS3_), UNUSED)
@@ -2603,7 +2603,7 @@ Local Symbols
 <P><STRONG><a name="[70]"></a>prvTaskExitError</STRONG> (Thumb, 60 bytes, Stack size 0 bytes, port.o(i.prvTaskExitError))
 <BR>[Address Reference Count : 1]<UL><LI> port.o(i.pxPortInitialiseStack)
 </UL>
-<P><STRONG><a name="[120]"></a>[local to app_remote_c]::Claw_Init_Mode(unsigned char)</STRONG> (Thumb, 238 bytes, Stack size 40 bytes, app_remote.o(i._ZN34_INTERNAL_12_app_remote_c_1233eb7214Claw_Init_ModeEh))
+<P><STRONG><a name="[120]"></a>[local to app_remote_c]::Claw_Init_Mode(unsigned char)</STRONG> (Thumb, 254 bytes, Stack size 40 bytes, app_remote.o(i._ZN34_INTERNAL_12_app_remote_c_3e5939a914Claw_Init_ModeEh))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = [local to app_remote_c]::Claw_Init_Mode(unsigned char) &rArr; __aeabi_dmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;softmotor::Angle_Set(float)
@@ -2619,7 +2619,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Remote_Distribute(short, unsigned char)
 </UL>
 
-<P><STRONG><a name="[123]"></a>[local to app_remote_c]::Keep_Claw_Mode(unsigned char)</STRONG> (Thumb, 110 bytes, Stack size 8 bytes, app_remote.o(i._ZN34_INTERNAL_12_app_remote_c_1233eb7214Keep_Claw_ModeEh))
+<P><STRONG><a name="[123]"></a>[local to app_remote_c]::Keep_Claw_Mode(unsigned char)</STRONG> (Thumb, 126 bytes, Stack size 8 bytes, app_remote.o(i._ZN34_INTERNAL_12_app_remote_c_3e5939a914Keep_Claw_ModeEh))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = [local to app_remote_c]::Keep_Claw_Mode(unsigned char)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;softmotor::Angle_Set(float)
@@ -2628,7 +2628,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Remote_Distribute(short, unsigned char)
 </UL>
 
-<P><STRONG><a name="[121]"></a>[local to app_remote_c]::Slaver_First_ClawTake(unsigned char)</STRONG> (Thumb, 220 bytes, Stack size 8 bytes, app_remote.o(i._ZN34_INTERNAL_12_app_remote_c_1233eb7221Slaver_First_ClawTakeEh))
+<P><STRONG><a name="[121]"></a>[local to app_remote_c]::Slaver_First_ClawTake(unsigned char)</STRONG> (Thumb, 220 bytes, Stack size 8 bytes, app_remote.o(i._ZN34_INTERNAL_12_app_remote_c_3e5939a921Slaver_First_ClawTakeEh))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = [local to app_remote_c]::Slaver_First_ClawTake(unsigned char) &rArr; [local to app_remote_c]::Safe_Mode(unsigned char) &rArr; motor::Safe_Set()
 </UL>
 <BR>[Calls]<UL><LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;softmotor::Angle_Set(float)
@@ -2638,7 +2638,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Remote_Distribute(short, unsigned char)
 </UL>
 
-<P><STRONG><a name="[122]"></a>[local to app_remote_c]::Slaver_Second_ClawTake(unsigned char)</STRONG> (Thumb, 220 bytes, Stack size 8 bytes, app_remote.o(i._ZN34_INTERNAL_12_app_remote_c_1233eb7222Slaver_Second_ClawTakeEh))
+<P><STRONG><a name="[122]"></a>[local to app_remote_c]::Slaver_Second_ClawTake(unsigned char)</STRONG> (Thumb, 220 bytes, Stack size 8 bytes, app_remote.o(i._ZN34_INTERNAL_12_app_remote_c_3e5939a922Slaver_Second_ClawTakeEh))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = [local to app_remote_c]::Slaver_Second_ClawTake(unsigned char) &rArr; [local to app_remote_c]::Safe_Mode(unsigned char) &rArr; motor::Safe_Set()
 </UL>
 <BR>[Calls]<UL><LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;softmotor::Angle_Set(float)
@@ -2648,7 +2648,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Remote_Distribute(short, unsigned char)
 </UL>
 
-<P><STRONG><a name="[124]"></a>[local to app_remote_c]::Safe_Mode(unsigned char)</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, app_remote.o(i._ZN34_INTERNAL_12_app_remote_c_1233eb729Safe_ModeEh))
+<P><STRONG><a name="[124]"></a>[local to app_remote_c]::Safe_Mode(unsigned char)</STRONG> (Thumb, 58 bytes, Stack size 8 bytes, app_remote.o(i._ZN34_INTERNAL_12_app_remote_c_3e5939a99Safe_ModeEh))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = [local to app_remote_c]::Safe_Mode(unsigned char) &rArr; motor::Safe_Set()
 </UL>
 <BR>[Calls]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor::Safe_Set()
@@ -2659,8 +2659,8 @@ Local Symbols
 <LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;[local to app_remote_c]::Claw_Init_Mode(unsigned char)
 </UL>
 
-<P><STRONG><a name="[7e]"></a>__sti___12_app_remote_c_1233eb72</STRONG> (Thumb, 154 bytes, Stack size 40 bytes, app_remote.o(i.__sti___12_app_remote_c_1233eb72))
-<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = __sti___12_app_remote_c_1233eb72 &rArr; motor::motor(unsigned char, unsigned short, str_Motor_t*, pid*, pid*)
+<P><STRONG><a name="[7e]"></a>__sti___12_app_remote_c_3e5939a9</STRONG> (Thumb, 152 bytes, Stack size 40 bytes, app_remote.o(i.__sti___12_app_remote_c_3e5939a9))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = __sti___12_app_remote_c_3e5939a9 &rArr; motor::motor(unsigned char, unsigned short, str_Motor_t*, pid*, pid*)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor::motor(unsigned char, unsigned short, str_Motor_t*, pid*, pid*)
 <LI><a href="#[150]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pid::pid(float, float, float, float, float, unsigned short, unsigned short, unsigned short)
